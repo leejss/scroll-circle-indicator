@@ -1,7 +1,8 @@
-import React, { MouseEvent, useEffect, useRef } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Circle } from "./Circle";
-import Screen from "./Screen";
+import { Screen } from "./Screen";
+import Test from "./Test";
 
 const BlackBackground = styled.div`
   /* position: absolute;
@@ -52,10 +53,9 @@ const ScrollButtonActions = styled.div`
 const arr = new Array(3).fill(0);
 
 const App: React.FC = () => {
-  console.log(arr);
-
+  const [viewIndex, setViewIndex] = useState<number>(0);
   const content = useRef<HTMLDivElement>(null);
-  const screens = useRef<HTMLDivElement[] | []>([]);
+  const screens = useRef<HTMLDivElement[] | null>(null);
   const actions = useRef<HTMLDivElement>(null);
 
   const scrollSpyObserver = new IntersectionObserver((entries) => {
@@ -75,14 +75,27 @@ const App: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   contentRef.current.forEach((item) => scrollSpyObserver.observe(item));
-  //   return () => {
-  //     contentRef.current.forEach((item) => scrollSpyObserver.unobserve(item));
-  //   };
-  // }, []);
+  const scrollObserver = new IntersectionObserver(
+    (entries) => {
+      const { target } = entries.find((entry) => entry.isIntersecting) || {};
+      console.log(target);
+    },
+    {
+      root: null,
+      threshold: 0.5,
+    }
+  );
 
-  useEffect(() => {}, [content.current]);
+  useEffect(() => {
+    // div element를 리스트에 담는다.
+    const contents = Array.from(content.current?.children!);
+
+    // 리스트를 순환하여 옵저버를 단다.
+    contents.forEach((item) => scrollObserver.observe(item));
+    return () => {
+      contents.forEach((item) => scrollObserver.unobserve(item));
+    };
+  }, []);
 
   return (
     <BlackBackground>
@@ -94,12 +107,7 @@ const App: React.FC = () => {
 
       <div ref={content}>
         {arr.map((_, i) => (
-          <Screen
-            key={i}
-            ref={(r) => {
-              screens.current[i] = r;
-            }}
-          ></Screen>
+          <Screen key={i}>{i}</Screen>
         ))}
       </div>
     </BlackBackground>
