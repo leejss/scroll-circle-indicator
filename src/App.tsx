@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Circle } from "./Circle";
 import { Screen } from "./Screen";
 import Test from "./Test";
+import { getRandomColor } from "./utils/colors";
 
 const BlackBackground = styled.div`
   /* position: absolute;
@@ -55,23 +56,32 @@ const arr = new Array(3).fill(0);
 const App: React.FC = () => {
   const [viewIndex, setViewIndex] = useState<number>(0);
   const content = useRef<HTMLDivElement>(null);
-  const screens = useRef<HTMLDivElement[] | null>(null);
+  const screens = useRef<Element[] | null>(null);
   const actions = useRef<HTMLDivElement>(null);
 
-  const scrollSpyObserver = new IntersectionObserver((entries) => {
-    console.log(entries);
-  });
+  const moveTo = (
+    index: number,
+    screensRef: React.MutableRefObject<Element[] | null>
+  ): void => {
+    if (screensRef.current) {
+      screensRef.current[index].scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
 
   const onClickHandle = (e: MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
 
     if (target.parentNode === actions.current) {
       const circles = Array.from(e.currentTarget.children);
-      const contents = Array.from(content.current?.children!);
+      // const contents = Array.from(content.current?.children!);
 
-      contents[circles.indexOf(target)].scrollIntoView({
-        behavior: "smooth",
-      });
+      if (screens.current) {
+        screens.current[circles.indexOf(target)].scrollIntoView({
+          behavior: "smooth",
+        });
+      }
     }
   };
 
@@ -79,6 +89,10 @@ const App: React.FC = () => {
     (entries) => {
       const { target } = entries.find((entry) => entry.isIntersecting) || {};
       console.log(target);
+      if (target && screens.current) {
+        const targetIndex = screens.current.indexOf(target);
+        setViewIndex(targetIndex);
+      }
     },
     {
       root: null,
@@ -88,12 +102,13 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // div element를 리스트에 담는다.
-    const contents = Array.from(content.current?.children!);
+    //  const contents = Array.from(content.current?.children!);
+    screens.current = Array.from(content.current?.children!);
 
     // 리스트를 순환하여 옵저버를 단다.
-    contents.forEach((item) => scrollObserver.observe(item));
+    screens.current.forEach((item) => scrollObserver.observe(item));
     return () => {
-      contents.forEach((item) => scrollObserver.unobserve(item));
+      screens.current!.forEach((item) => scrollObserver.unobserve(item));
     };
   }, []);
 
@@ -107,7 +122,9 @@ const App: React.FC = () => {
 
       <div ref={content}>
         {arr.map((_, i) => (
-          <Screen key={i}>{i}</Screen>
+          <Screen key={i} backgroundColor={getRandomColor()}>
+            {i}
+          </Screen>
         ))}
       </div>
     </BlackBackground>

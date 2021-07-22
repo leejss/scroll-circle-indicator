@@ -1,13 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, { MouseEvent } from "react";
+import ButtonActions from "./ButtonActions";
 
 const Test: React.FC = () => {
-  const testRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    console.log(testRef.current);
-  }, []);
+  const moveTo = (e: MouseEvent<HTMLDivElement>) => {
+    console.log(e.currentTarget);
+  };
   return (
     <div>
-      <div ref={testRef}>TEST</div>
+      <ButtonActions moveTo={moveTo} />
     </div>
   );
 };

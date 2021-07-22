@@ -1,9 +1,11 @@
-import React from "react";
 import styled from "styled-components";
-import { getRandomBackground, getRandomColor } from "./utils/randomColor";
 
-export const Screen = styled.div`
+type ScreenProps = {
+  backgroundColor: string;
+};
+
+export const Screen = styled.div<ScreenProps>`
   width: 100%;
   height: 100vh;
-  background: ${getRandomColor()};
+  background: ${(props) => props.backgroundColor};
 `;
