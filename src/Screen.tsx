@@ -7,5 +7,8 @@ type ScreenProps = {
 export const Screen = styled.div<ScreenProps>`
   width: 100%;
   height: 100vh;
-  background: ${(props) => props.backgroundColor};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5rem;
 `;

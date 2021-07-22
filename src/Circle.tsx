@@ -6,6 +6,7 @@ export const Circle = styled.div`
   border: 1px solid #fff;
   width: 20px;
   height: 20px;
+  transition: 0.5s;
 
   &.fill {
     background: #ffffff;

@@ -25,14 +25,24 @@ const ScrollButtonActions = styled.div`
 `;
 
 type ButtonActionsProps = {
-  moveTo: (e: MouseEvent<HTMLDivElement>, ) => void;
+  moveTo: (
+    index: number
+  ) => React.MouseEventHandler<HTMLDivElement> | undefined;
+  viewIndex: number;
 };
 
-const ButtonActions: React.FC<ButtonActionsProps> = ({ moveTo }) => {
+const ButtonActions: React.FC<ButtonActionsProps> = ({ moveTo, viewIndex }) => {
   return (
-    <ScrollButtonActions onClick={moveTo}>
-      {arr.map((_, i) => {
-        return <Circle key={i} />;
+    <ScrollButtonActions>
+      {[0, 0, 0].map((_, i) => {
+        return (
+          <Circle
+            key={i}
+            id={`${i}`}
+            className={i === viewIndex ? "fill" : ""}
+            onClick={moveTo(i)}
+          />
+        );
       })}
     </ScrollButtonActions>
   );
